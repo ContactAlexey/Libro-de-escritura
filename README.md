@@ -266,6 +266,8 @@ Los errores no se muestran en la página: aparecen solo en la **consola del nave
 - Instagram: [@alexeytechsec](https://www.instagram.com/alexeytechsec/)
 - TikTok: [@alexeytechsec](https://www.tiktok.com/@alexeytechsec)
 
+Si quereis probar la web [Aquí](https://contactalexey.github.io/Libro-de-escritura/)
+
 Tecnologías: HTML, CSS y JavaScript sin frameworks · [jsPDF](https://github.com/parallax/jsPDF) para exportar a PDF · tipografías [Pixelify Sans](https://fonts.google.com/specimen/Pixelify+Sans) y [Press Start 2P](https://fonts.google.com/specimen/Press+Start+2P) de Google Fonts.
 
 *Minecraft es una marca de Mojang / Microsoft. Este proyecto es independiente y no está afiliado a ellos.*
