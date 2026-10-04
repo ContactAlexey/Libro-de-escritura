@@ -1,0 +1,645 @@
+/* ======================================================================
+   HOJA DE ESTILOS — EDITOR DE LIBROS ESTILO MINECRAFT
+   ====================================================================== */
+/* Variables globales: colores de tinta, pergamino y marco rojo; tamaño base de letra (--fs). */
+:root {
+  --ink: #3b2a1a;
+  --par: #ecdcb0;
+  --red: #9c2a1e;
+  --dk: #2a1a10;
+  --fs: 17px;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+/* La página no se desplaza: el contenido se coloca en #app, que tiene su propio scroll oculto. */
+html {
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+}
+* {
+  box-sizing: border-box;
+}
+html,
+/* Cuerpo: fuente pixelada y fondo oscuro de reserva. */
+body {
+  margin: 0;
+  height: 100%;
+}
+body {
+  font:
+    400 var(--fs)/1.3 "Pixelify Sans",
+    "Courier New",
+    monospace;
+  color: var(--ink);
+  background: #111;
+  overflow: hidden;
+}
+/* Modo Minecraftiano: fuente con respaldo de símbolos para el alfabeto galáctico. */
+body.mc {
+  --fs: 20px;
+  font-family:
+    "Pixelify Sans", "Segoe UI Symbol", "Ebrima", "Gadugi", "Cambria Math", "Noto Sans Symbols",
+    "Noto Sans Symbols 2", "Noto Sans Canadian Aboriginal", "Noto Sans Vai", "Noto Sans Math", sans-serif;
+  letter-spacing: 0.06em;
+  line-height: 1.5;
+}
+/* ======================================================================
+   FONDO Y CONTENEDOR PRINCIPAL
+   ====================================================================== */
+/* Imagen de fondo a pantalla completa, ligeramente desenfocada y oscurecida. */
+#bg {
+  background: linear-gradient(#3a3f8f, #ff9a4a);
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  transform: scale(1.06);
+  object-fit: cover;
+  filter: blur(4px) brightness(0.72);
+}
+/* Contenedor centrado del libro y los botones; scroll interno sin barra visible. */
+#app {
+  position: fixed;
+  inset: 0;
+  overflow: auto;
+  scrollbar-width: none;
+  display: flex;
+  flex-direction: column;
+  align-items: safe center;
+  justify-content: safe center;
+  gap: 14px;
+  padding: 16px;
+}
+#app::-webkit-scrollbar {
+  display: none;
+}
+/* ======================================================================
+   BOTÓN DE AJUSTES
+   ====================================================================== */
+/* Engranaje fijo en la esquina superior izquierda (no se mueve con el scroll). */
+#gear {
+  position: fixed;
+  transform: none;
+  top: calc(14px + env(safe-area-inset-top, 0px));
+  left: 14px;
+  width: 60px;
+  height: 57px;
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+  z-index: 5;
+  transition:
+    transform 0.15s,
+    filter 0.15s;
+}
+#gear img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  image-rendering: pixelated;
+}
+#gear:hover {
+  filter: brightness(1.15);
+}
+#gear:active {
+  filter: brightness(0.9);
+}
+/* ======================================================================
+   EL LIBRO
+   ====================================================================== */
+/* .bk es el libro: mantiene la proporción de la imagen y es un 'contenedor' para usar unidades cqw,
+   de modo que todo el texto se escala con el tamaño del libro. */
+.bk {
+  position: relative;
+  aspect-ratio: 1594/986;
+  container-type: inline-size;
+  image-rendering: pixelated;
+}
+.bk > .bi {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  image-rendering: pixelated;
+}
+/* Tamaño del libro: se adapta al ancho y al alto de la ventana. */
+#book {
+  width: min(94vw, 1100px, calc((100vh - 165px) * 1.6166));
+  width: min(94vw, 1100px, calc((100dvh - 165px) * 1.6166));
+  min-width: 300px;
+  filter: drop-shadow(0 14px 16px #000b);
+}
+/* Rótulo 'Página X de Y' de cada hoja (.l = izquierda, .r = derecha). */
+.pn {
+  position: absolute;
+  top: 7.4%;
+  width: 40%;
+  text-align: center;
+  font-size: 2.1cqw;
+  color: #b79a5c;
+  white-space: nowrap;
+}
+.l {
+  left: 7%;
+}
+.r {
+  left: 54%;
+}
+/* Zonas de escritura (.ta = textarea editable, .tx = texto de la vista previa). */
+.ta,
+.tx {
+  position: absolute;
+  top: 15%;
+  width: 40%;
+  height: 66%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  resize: none;
+  outline: 0;
+  overflow: hidden;
+  font:
+    400 2.25cqw/1.45 "Pixelify Sans",
+    "Courier New",
+    monospace;
+  color: var(--ink);
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+.ta::placeholder {
+  color: #b79a5c;
+}
+/* Textarea oculto usado solo para medir cuánto texto cabe en una página. */
+.m {
+  visibility: hidden;
+  pointer-events: none;
+}
+/* Flechas laterales para cambiar de hoja (.ap anterior, .an siguiente). */
+.ar {
+  position: absolute;
+  top: 46%;
+  width: 2.4cqw;
+  height: 3.6cqw;
+  border: 0;
+  padding: 0;
+  background: #a98a52;
+  cursor: pointer;
+  opacity: 0.85;
+  transition:
+    background 0.12s,
+    transform 0.12s;
+}
+.ar:hover {
+  background: #6d4c1e;
+  transform: scale(1.15);
+}
+.ar[hidden] {
+  display: none;
+}
+.ap {
+  left: 3.6%;
+  clip-path: polygon(100% 0, 0 50%, 100% 100%);
+}
+.an {
+  right: 3.6%;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+/* Hoja que gira al cambiar de página (.fw avanzar, .bw retroceder). */
+#leaf {
+  position: absolute;
+  top: 3.4%;
+  height: 93%;
+  width: 46.6%;
+  display: none;
+  pointer-events: none;
+  background: #e8d7a8;
+  border: 2px solid #7a5a2a;
+  box-shadow: 0 0 18px #0008;
+  backface-visibility: hidden;
+}
+#leaf img,
+.panel > .tex {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+#leaf::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #0004, #0000 25%);
+}
+#leaf.fw {
+  display: block;
+  left: 50.4%;
+  transform-origin: left center;
+}
+#leaf.bw {
+  display: block;
+  left: 3%;
+  transform-origin: right center;
+}
+#lw {
+  position: absolute;
+  inset: 0;
+  perspective: 2200px;
+  pointer-events: none;
+}
+/* ======================================================================
+   BOTONES, ESTADO Y AVISOS
+   ====================================================================== */
+/* Fila de botones Guardar / Importar / Exportar. */
+#btns {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+/* Botones (.pb) y filas de menú (.row) con estilo de pergamino y relieve. */
+.pb,
+/* Opciones de las ventanas, con el color rojo del marco. */
+.row {
+  font: inherit;
+  color: var(--ink);
+  cursor: pointer;
+  background: #e8d7a8;
+  border: 3px solid var(--dk);
+  box-shadow:
+    inset 3px 3px 0 #f6ecc9,
+    inset -3px -3px 0 #c4ad78,
+    0 4px 0 #0006;
+  transition:
+    transform 0.1s,
+    background 0.1s;
+}
+.pb {
+  min-width: 150px;
+  padding: 10px 22px;
+  text-align: center;
+}
+.pb:hover,
+.row:hover {
+  background: #f6ebc3;
+  transform: translateY(-2px);
+}
+.pb:active,
+.row:active {
+  transform: translateY(3px);
+  box-shadow:
+    inset 3px 3px 0 #c4ad78,
+    inset -3px -3px 0 #f6ecc9;
+}
+button:focus-visible,
+input:focus-visible,
+a:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+/* Indicador de estado de guardado (#st.d = cambios sin guardar). */
+#st {
+  padding: 4px 12px;
+  background: #0009;
+  color: #cfc;
+  font-size: 14px;
+  border: 2px solid #000;
+}
+#st.d {
+  color: #ffd37a;
+}
+body.mc #st {
+  font-size: 15px;
+}
+/* Aviso temporal inferior. */
+#toast {
+  max-width: 90vw;
+  text-align: center;
+  position: fixed;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #e8d7a8;
+  border: 3px solid var(--dk);
+  padding: 8px 16px;
+  display: none;
+  z-index: 20;
+}
+/* ======================================================================
+   VENTANAS EMERGENTES
+   ====================================================================== */
+/* Capa oscura que cubre la página cuando hay una ventana abierta (.on la muestra). */
+#ov {
+  position: fixed;
+  inset: 0;
+  background: #000a;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  padding: 16px;
+}
+#ov.on {
+  display: flex;
+}
+/* Ventana: fondo beige y marco rojo como el libro; sin barra de desplazamiento visible. */
+.panel {
+  position: relative;
+  width: min(92vw, 460px);
+  max-height: 92vh;
+  overflow: auto;
+  background: #e8d7a8;
+  border: 6px solid var(--red);
+  outline: 3px solid #1a0505;
+  box-shadow:
+    inset 0 0 0 3px #5a1410,
+    0 12px 34px #000;
+  padding: 20px 24px 24px;
+  animation: pop 0.18s ease-out;
+}
+.panel > .tex {
+  z-index: -1;
+}
+.panel {
+  scrollbar-width: none;
+}
+.panel::-webkit-scrollbar {
+  display: none;
+}
+.panel.wide {
+  width: min(94vw, 900px);
+}
+@keyframes pop {
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+}
+/* Cabecera de ventana (título + botones volver/cerrar). */
+.hd {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.hd h2 {
+  flex: 1;
+  margin: 0;
+  font-size: 1.35em;
+  font-weight: 600;
+}
+.x,
+.bk2 {
+  width: 34px;
+  height: 34px;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 1.3em;
+  cursor: pointer;
+  color: var(--ink);
+}
+.x:hover,
+.bk2:hover {
+  color: var(--red);
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  text-align: left;
+  text-decoration: none;
+}
+.row:hover {
+  transform: translateX(4px);
+}
+.row .g {
+  margin-left: auto;
+}
+.row svg {
+  flex: none;
+}
+.row.sel {
+  outline: 3px solid #2f6fd0;
+  outline-offset: -1px;
+}
+/* ======================================================================
+   SELECTOR DE FONDO
+   ====================================================================== */
+/* Miniaturas de la lista de fondos. */
+.th {
+  margin-bottom: 8px;
+  padding: 6px 8px;
+}
+.th img {
+  width: 56px;
+  height: 32px;
+  image-rendering: pixelated;
+  border: 2px solid var(--dk);
+}
+.plus {
+  width: 56px;
+  font-size: 24px;
+  text-align: center;
+}
+/* Rejilla de 3 columnas: lista, vista previa y panel de imagen propia. */
+.bgg {
+  display: grid;
+  grid-template-columns: 170px 1fr 170px;
+  gap: 16px;
+  align-items: start;
+}
+/* Vista previa del fondo (.pvbg), con el libro (.pvb) y los botones (.pvbt) en miniatura. */
+.pv {
+  position: relative;
+  aspect-ratio: 16/10;
+  container-type: inline-size;
+  border: 3px solid var(--dk);
+  overflow: hidden;
+  background: #222;
+}
+.pvbg {
+  position: absolute;
+  inset: -6px;
+  width: calc(100% + 12px);
+  height: calc(100% + 12px);
+  object-fit: cover;
+  filter: blur(1.5px) brightness(0.72);
+}
+.pvb {
+  position: absolute;
+  left: 12%;
+  width: 76%;
+  top: 6%;
+}
+.pvbt {
+  position: absolute;
+  bottom: 4%;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 2cqw;
+}
+.pvbt .pb {
+  min-width: 0;
+  font-size: 1.9cqw;
+  padding: 0.7cqw 2.6cqw;
+  border-width: 2px;
+  box-shadow: none;
+}
+.up {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: center;
+}
+.drop {
+  height: 130px;
+  font: inherit;
+  font-size: 34px;
+  color: var(--ink);
+  background: #0000000d;
+  border: 3px dashed #8a7550;
+  cursor: pointer;
+}
+.drop small {
+  display: block;
+  font-size: 13px;
+}
+.drop:hover {
+  background: #0000001c;
+}
+/* ======================================================================
+   FORMULARIOS DE EXPORTAR / GUARDAR COMO
+   ====================================================================== */
+.rd {
+  display: block;
+  margin: 6px 0;
+  cursor: pointer;
+}
+.rd input {
+  accent-color: #2f6fd0;
+  margin-right: 8px;
+}
+.inp {
+  width: 100%;
+  padding: 8px;
+  font: inherit;
+  background: #fff8e0;
+  border: 3px solid var(--dk);
+  color: var(--ink);
+}
+.acts {
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+  justify-content: center;
+}
+.acts .pb {
+  min-width: 0;
+  flex: 1;
+}
+/* ======================================================================
+   CRÉDITOS E IDIOMAS
+   ====================================================================== */
+.cr {
+  background: #0000000f;
+  border: 2px solid #8a7550;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+}
+.cr b {
+  display: block;
+  font-size: 1.15em;
+}
+.mcf {
+  font-family:
+    "Pixelify Sans", "Segoe UI Symbol", "Ebrima", "Gadugi", "Cambria Math", "Noto Sans Symbols",
+    "Noto Sans Symbols 2", "Noto Sans Canadian Aboriginal", "Noto Sans Vai", sans-serif;
+  font-size: 20px;
+  letter-spacing: 0.06em;
+}
+/* Reglas adaptables según el tamaño o las preferencias del usuario. */
+@media (max-width: 820px) {
+  .bgg {
+    grid-template-columns: 1fr;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* cuadros emergentes con el color del marco del libro */
+.panel .row,
+.panel .pb,
+.panel .cr {
+  color: #f6e7bd;
+  background: #8f2a1e;
+  border-color: #2a0a06;
+  box-shadow:
+    inset 3px 3px 0 #b4463a,
+    inset -3px -3px 0 #5e160f,
+    0 4px 0 #0006;
+}
+.panel .row:hover,
+.panel .pb:hover {
+  background: #a5362a;
+}
+.panel .row:active,
+.panel .pb:active {
+  box-shadow:
+    inset 3px 3px 0 #5e160f,
+    inset -3px -3px 0 #b4463a;
+}
+.panel .row small,
+.panel .cr small {
+  color: #e2c79a;
+}
+.panel .row.sel {
+  outline: 3px solid #f0c040;
+  outline-offset: -1px;
+}
+.panel .th img {
+  border-color: #2a0a06;
+}
+.panel .inp {
+  border-color: #5e160f;
+  background: #fff4d6;
+}
+.panel .drop {
+  border-color: #8f2a1e;
+  color: #8f2a1e;
+}
+.panel .drop:hover {
+  background: #9c2a1e22;
+}
+.panel .pv {
+  border-color: #5e160f;
+}
+.panel .pvbt .pb {
+  color: var(--ink);
+  background: #e8d7a8;
+  border-color: var(--dk);
+}
+.panel .rd input {
+  accent-color: #8f2a1e;
+}
+#toast {
+  background: #8f2a1e;
+  color: #f6e7bd;
+  border-color: #2a0a06;
+}

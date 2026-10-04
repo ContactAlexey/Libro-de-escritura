@@ -1,0 +1,61 @@
+<!doctype html>
+<!-- Editor de libros estilo Minecraft. Estructura: index.html (marcado), style.css (estilos) y script.js (lógica). -->
+<html lang="es">
+  <head>
+    <!-- Tipografías pixeladas de Google Fonts -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Libro de escritura</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600&family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <!-- jsPDF: librería usada solo para exportar a PDF (requiere conexión a internet) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Hoja de estilos del proyecto -->
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="shortcut icon" href="./logo.ico" type="image/x-icon">
+  </head>
+  <body>
+    <!-- Imagen de fondo (su src lo asigna script.js) -->
+    <img id="bg" alt="" />
+    <!-- Botón de ajustes: abre el menú de configuración -->
+    <button id="gear" aria-label="Ajustes"><img src="./elementos/boton_ajustes.png" alt="" /></button>
+    <!-- Contenedor principal: libro, botones y estado -->
+    <div id="app">
+      <!-- El libro: imagen de marco + rótulos de página + dos áreas de escritura -->
+      <div id="book" class="bk">
+        <img class="bi" src="./elementos/libro.png" alt="" />
+        <span class="pn l"></span><span class="pn r"></span>
+        <textarea class="ta l" data-s="0" spellcheck="false"></textarea>
+        <textarea class="ta r" data-s="1" spellcheck="false"></textarea>
+        <!-- Textarea invisible para medir cuánto texto cabe en una página -->
+        <textarea class="ta l m" id="M" tabindex="-1" aria-hidden="true"></textarea>
+        <!-- Flechas para pasar de hoja -->
+        <button class="ar ap" aria-label="‹"></button><button class="ar an" aria-label="›"></button>
+        <!-- Hoja animada que gira al cambiar de página -->
+        <div id="lw"><div id="leaf"></div></div>
+      </div>
+      <!-- Guardar / Importar / Exportar (los textos los pone script.js según el idioma) -->
+      <div id="btns">
+        <button class="pb" id="bS"></button><button class="pb" id="bI"></button
+        ><button class="pb" id="bE"></button>
+      </div>
+      <!-- Indicador: guardado o cambios sin guardar -->
+      <div id="st"></div>
+    </div>
+    <!-- Capa de ventanas emergentes (se rellena desde script.js) -->
+    <div id="ov"></div>
+    <!-- Avisos breves -->
+    <div id="toast"></div>
+    <!-- Selectores de archivo ocultos: #fi importa texto, #fb sube una imagen de fondo -->
+    <input type="file" id="fi" accept=".txt,.md,.text,text/plain" hidden /><input
+      type="file"
+      id="fb"
+      accept="image/*"
+      hidden
+    />
+    <!-- Lógica de la aplicación (se carga al final para que el HTML ya exista) -->
+    <script src="./script.js"></script>
+  </body>
+</html>
